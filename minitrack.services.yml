@@ -1,0 +1,9 @@
+services:
+  minitrack.tracker:
+    class: '\Drupal\minitrack\Service\TrackerService'
+    arguments: ['@database', '@config.factory', '@logger.channel.default', '@queue.default']
+
+  minitrack.queue_worker.tracker:
+    class: '\Drupal\minitrack\Plugin\QueueWorker\TrackerQueueWorker'
+    tags:
+      - { name: 'queue_worker', title: 'Minitrack event processor' }

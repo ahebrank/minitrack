@@ -1,0 +1,11 @@
+minitrack.settings:
+  type: config_entity
+  mapping:
+    api_key:
+      type: string
+    cors_origins:
+      type: sequence
+      sequence:
+        type: string
+    retention_days:
+      type: integer

@@ -1,0 +1,72 @@
+<?php
+
+/**
+ * @file
+ * Helper functions for the Minitrack module.
+ */
+
+use Drupal\Core\Database\Connection;
+
+/**
+ * Get aggregated stats for a host, optional path, and optional date range.
+ *
+ * @param string $host
+ *   Hostname to filter (required).
+ * @param string|null $path
+ *   Optional path (exact match) to filter. If NULL, counts all paths.
+ * @param int|string|null $start
+ *   Optional start timestamp (int) or date string parseable by strtotime(). Inclusive.
+ * @param int|string|null $end
+ *   Optional end timestamp (int) or date string parseable by strtotime(). Inclusive.
+ *
+ * @return array
+ *   Associative array with keys 'pageviews' (int) and 'sessions' (int).
+ *
+ * @throws \InvalidArgumentException
+ *   Thrown when required arguments are missing or invalid.
+ */
+function minitrack_get_stats($host, $path = NULL, $start = NULL, $end = NULL) {
+  if (empty($host) || !is_string($host)) {
+    throw new \InvalidArgumentException('Host must be a non-empty string.');
+  }
+
+  // Normalize timestamps
+  $start_ts = NULL;
+  $end_ts = NULL;
+  if (!is_null($start) && $start !== '') {
+    $start_ts = is_numeric($start) ? (int) $start : strtotime($start);
+    if ($start_ts === FALSE) { throw new \InvalidArgumentException('Invalid start date'); }
+  }
+  if (!is_null($end) && $end !== '') {
+    $end_ts = is_numeric($end) ? (int) $end : strtotime($end);
+    if ($end_ts === FALSE) { throw new \InvalidArgumentException('Invalid end date'); }
+  }
+
+  $connection = \Drupal::database();
+
+  // Build conditions
+  $conditions = ['host' => $host];
+  if (!is_null($path)) {
+    $conditions['path'] = $path;
+  }
+
+  // Pageviews count
+  $select = $connection->select('minitrack_pageview', 'p');
+  $select->addExpression('COUNT(p.id)', 'pageviews');
+  $select->condition('p.host', $host);
+  if (!is_null($path)) { $select->condition('p.path', $path); }
+  if (!is_null($start_ts)) { $select->condition('p.timestamp', $start_ts, '>='); }
+  if (!is_null($end_ts)) { $select->condition('p.timestamp', $end_ts, '<='); }
+  $pageviews = (int) $select->execute()->fetchField();
+
+  // Sessions count (distinct session_id). Exclude NULL or empty session ids.
+  $select2 = $connection->select('minitrack_pageview', 'p');
+  $select2->addExpression('COUNT(DISTINCT COALESCE(NULLIF(p.session_id, \'\'), p.session_id))', 'sessions');
+  $select2->condition('p.host', $host);
+  if (!is_null($path)) { $select2->condition('p.path', $path); }
+  if (!is_null($start_ts)) { $select2->condition('p.timestamp', $start_ts, '>='); }
+  if (!is_null($end_ts)) { $select2->condition('p.timestamp', $end_ts, '<='); }
+  $sessions = (int) $select2->execute()->fetchField();
+
+  return ['pageviews' => $pageviews, 'sessions' => $sessions];
+}

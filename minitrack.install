@@ -1,0 +1,37 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the Minitrack module.
+ */
+
+use Drupal\Core\Database\SchemaObjectExistsException;
+
+function minitrack_schema() {
+  $schema['minitrack_pageview'] = [
+    'description' => 'Stores raw pageview events.',
+    'fields' => [
+      'id' => ['type' => 'serial', 'not null' => TRUE],
+      'session_id' => ['type' => 'varchar', 'length' => 128, 'not null' => FALSE],
+      'path' => ['type' => 'text', 'not null' => FALSE],
+      'host' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+      'timestamp' => ['type' => 'int', 'not null' => TRUE],
+      'data' => ['type' => 'json', 'not null' => FALSE],
+    ],
+    'primary key' => ['id'],
+    'indexes' => [
+      'session_idx' => ['session_id'],
+      'time_idx' => ['timestamp'],
+    ],
+  ];
+
+  return $schema;
+}
+
+function minitrack_install() {
+  // Nothing special yet.
+}
+
+function minitrack_uninstall() {
+  // Remove config on uninstall if necessary.
+}

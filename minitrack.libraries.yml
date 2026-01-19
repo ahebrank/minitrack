@@ -1,0 +1,4 @@
+tracker:
+  js:
+    js/tracker.js: { }
+  dependencies: []

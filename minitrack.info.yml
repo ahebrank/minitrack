@@ -1,0 +1,4 @@
+name: Minitrack
+type: module
+description: 'Lightweight pageview and session tracking module with a tiny JS snippet.'
+core_version_requirement: ^10 || ^11

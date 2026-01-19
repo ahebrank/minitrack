@@ -1,0 +1,15 @@
+minitrack.event.receive:
+  path: '/minitrack/events'
+  defaults:
+    _controller: '\\Drupal\\minitrack\\Controller\\EventReceiverController::receive'
+    _title: 'Minitrack event receiver'
+  methods: [POST, OPTIONS]
+  requirements: { _access: 'TRUE' }
+
+minitrack.admin.settings:
+  path: '/admin/config/system/minitrack'
+  defaults:
+    _form: '\\Drupal\\minitrack\\Form\\SettingsForm'
+    _title: 'Minitrack settings'
+  requirements:
+    _permission: 'administer minitrack'
