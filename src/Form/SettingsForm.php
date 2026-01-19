@@ -17,10 +17,11 @@ class SettingsForm extends ConfigFormBase {
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('minitrack.settings');
 
-    $form['api_key'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('API key'),
-      '#default_value' => $config->get('api_key'),
+    $form['api_keys'] = [
+      '#type' => 'textarea',
+      '#title' => $this->t('API keys (one per line)'),
+      '#description' => $this->t('Provide one or more API keys. Use separate lines for multiple keys.'),
+      '#default_value' => implode("\n", (array) $config->get('api_keys')),
     ];
 
     $form['cors_origins'] = [
@@ -33,8 +34,11 @@ class SettingsForm extends ConfigFormBase {
   }
 
   public function submitForm(array &$form, FormStateInterface $form_state) {
+    $api_keys = preg_split('/\r\n|\r|\n/', $form_state->getValue('api_keys'));
+    $api_keys = array_values(array_filter(array_map('trim', $api_keys), function($v){ return $v !== ''; }));
+
     $this->config('minitrack.settings')
-      ->set('api_key', $form_state->getValue('api_key'))
+      ->set('api_keys', $api_keys)
       ->set('cors_origins', preg_split('/\r\n|\r|\n/', $form_state->getValue('cors_origins')))
       ->save();
 

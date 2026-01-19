@@ -1,8 +1,10 @@
 minitrack.settings:
   type: config_entity
   mapping:
-    api_key:
-      type: string
+    api_keys:
+      type: sequence
+      sequence:
+        type: string
     cors_origins:
       type: sequence
       sequence:

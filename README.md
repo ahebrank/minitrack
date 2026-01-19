@@ -1,6 +1,6 @@
 # Minitrack
 
-Lightweight Drupal 10 module for pageview and session tracking with a tiny embeddable JS snippet.
+Lightweight Drupal module for pageview and session tracking with a tiny embeddable JS snippet.
 
 See module files for configuration and usage.
 
@@ -15,6 +15,6 @@ See module files for configuration and usage.
 ```
 
 Notes:
-- Replace `YOUR_API_KEY_HERE` with the API key configured in the module settings, or leave blank for open ingest (not recommended).
+- Replace `YOUR_API_KEY_HERE` with one of the API keys configured in the module settings (multiple keys are supported, one per line), or leave blank for open ingest (not recommended).
 - `window.minitrack_endpoint` defaults to `/minitrack/events` when omitted.
 

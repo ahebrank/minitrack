@@ -29,12 +29,15 @@ class EventReceiverController extends ControllerBase {
       return new JsonResponse(['error' => 'Invalid JSON'], 400);
     }
 
-    // Basic API key check
+    // Basic API key check (supports multiple keys in config)
     $provided = $request->headers->get('X-Minitrack-Key');
     $config = \Drupal::config('minitrack.settings');
-    $expected = $config->get('api_key');
-    if (!empty($expected) && $provided !== $expected) {
-      return new JsonResponse(['error' => 'Unauthorized'], 401);
+    $keys = (array) $config->get('api_keys');
+    // If keys are configured, require a matching provided key.
+    if (!empty($keys)) {
+      if (empty($provided) || !in_array($provided, $keys, TRUE)) {
+        return new JsonResponse(['error' => 'Unauthorized'], 401);
+      }
     }
 
     // Apply CORS allow-origin header for accepted origins
