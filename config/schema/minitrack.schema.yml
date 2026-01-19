@@ -4,7 +4,12 @@ minitrack.settings:
     api_keys:
       type: sequence
       sequence:
-        type: string
+        type: mapping
+        mapping:
+          key:
+            type: string
+          description:
+            type: string
     cors_origins:
       type: sequence
       sequence:

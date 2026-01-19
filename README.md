@@ -14,7 +14,7 @@ See module files for configuration and usage.
 <script async src="https://example.com/modules/minitrack/js/tracker.js"></script>
 ```
 
-Notes:
-- Replace `YOUR_API_KEY_HERE` with one of the API keys configured in the module settings (multiple keys are supported, one per line), or leave blank for open ingest (not recommended).
+- Notes:
+- Replace `YOUR_API_KEY_HERE` with one of the API keys configured in the module settings. The admin settings provide an "Add API key" button where you can enter a `key` and optional `description` for each entry.
 - `window.minitrack_endpoint` defaults to `/minitrack/events` when omitted.
 

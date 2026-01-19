@@ -33,9 +33,15 @@ class EventReceiverController extends ControllerBase {
     $provided = $request->headers->get('X-Minitrack-Key');
     $config = \Drupal::config('minitrack.settings');
     $keys = (array) $config->get('api_keys');
+    // Normalize to array of key strings if stored as mappings.
+    $key_strings = [];
+    foreach ($keys as $k) {
+      if (is_array($k) && isset($k['key'])) { $key_strings[] = $k['key']; }
+      elseif (is_string($k)) { $key_strings[] = $k; }
+    }
     // If keys are configured, require a matching provided key.
-    if (!empty($keys)) {
-      if (empty($provided) || !in_array($provided, $keys, TRUE)) {
+    if (!empty($key_strings)) {
+      if (empty($provided) || !in_array($provided, $key_strings, TRUE)) {
         return new JsonResponse(['error' => 'Unauthorized'], 401);
       }
     }
